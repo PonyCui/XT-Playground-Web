@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+</head>
+
+<body style="margin: 0; overflow-y: hidden; "></body>
+
+<!-- Dependencies -->
+<script src='https://cdn.jsdelivr.net/npm/spark-md5@3.0.0/spark-md5.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/js-sha1@0.6.0/build/sha1.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/pako@1.0.6/dist/pako.min.js'></script>
+
+<!-- XT Libraries -->
+<script src="libs/Core/xt.core.web.min.js?v20180226001"></script>
+<script src="libs/Foundation/xt.foundation.web.min.js?v20180226001"></script>
+<script src="libs/UIKit/xt.uikit.web.min.js?v20180226001"></script>
+
+<script>
+    if (parent && parent.config) {
+        if (parent.config.connectToDebugger === true) {
+            XT.Debug.worker = new Worker('libs/Core/xt.debugWorker.web.min.js')
+            XT.Debug.connect()
+            parent.config.connecting()
+            XT.Debug.reloadHandler = function (source, force) {
+                if (force === true) {
+                    window.location.reload()
+                }
+                else {
+                    parent.config.connected()
+                    window.eval(source)
+                }
+            }
+        }
+    }
+</script>
+
+</html>

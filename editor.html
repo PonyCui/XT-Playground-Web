@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+</head>
+
+<body style="overflow: hidden">
+
+    <div id="container" style="width:800px;height:600px;">
+
+    </div>
+
+    <script src="libs/vs/loader.js"></script>
+    <script>
+        var xtTypings = function() {
+            var xmlRequest = new XMLHttpRequest()
+            xmlRequest.open("GET", "./libs/xt.d.ts", false)
+            xmlRequest.send()
+            return xmlRequest.responseText
+        }
+        require.config({ paths: { vs: 'libs/vs' } })
+        require(['vs/editor/editor.main'], function () {
+            monaco.languages.typescript.typescriptDefaults.addExtraLib(xtTypings())
+            var editor = monaco.editor.create(document.getElementById('container'), {
+                value: [
+                    'function x() {',
+                    '\tconsole.log("Hello world!");',
+                    '}'
+                ].join('\n'),
+                language: 'typescript'
+            });
+        });
+        document.addEventListener("mousewheel", function(e) {
+            e.preventDefault()
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Greeting App</title>
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        body {
+            background-color: #f9f9f9
+        }
+
+        :root {
+            --mdc-theme-primary: #0e4ead;
+        }
+    </style>
+</head>
+
+<body class="mdc-typography">
+    <header class="mdc-toolbar">
+        <div class="mdc-toolbar__row">
+            <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
+                <span class="mdc-toolbar__title">XT Playground</span>
+            </section>
+            <section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
+                <a href="#" class="material-icons mdc-toolbar__icon toggle" aria-label="More" alt="More">more_vert</a>
+                <div class="mdc-menu-anchor">
+                    <div class="mdc-menu" tabindex="-1" id="more-menu">
+                        <ul class="mdc-menu__items mdc-list" role="menu" aria-hidden="true" style="transform: scale(1, 1);">
+                            <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;" id="connectToDebuggerToggleButton">Connect To Debugger</li>
+                            <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;">Show QR Code</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </header>
+    <main>
+        <p class="mdc-typography--headline" id="greeting"></p>
+        <div id="previewer" style="text-align: center; display: none">
+            <iframe style="width: 375px; height: 667px; border: none; background-color: white" class="mdc-elevation--z5" id="runner"
+                name="_runner"></iframe>
+        </div>
+        <div id="editor" style="text-align: center; display: none">
+            <iframe style="width: 800px; height: 600px; border: none; background-color: white" class="mdc-elevation--z5"
+                name="_editor" src="editor.html"></iframe>
+        </div>
+        <p class="mdc-typography--headline" id="greeting"></p>
+        <div style="text-align: center">
+            <button id="actionButton" type="submit" class="mdc-button
+                         mdc-button--raised
+                         mdc-ripple-surface" data-mdc-auto-init="MDCRipple">
+                Open Editor
+            </button>
+        </div>
+        <p class="mdc-typography--headline" id="greeting"></p>
+    </main>
+
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>window.mdc.autoInit();</script>
+    <script>
+
+        var checkDebuggerOnline = function () {
+            var xmlRequest = new XMLHttpRequest()
+            xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false)
+            xmlRequest.send()
+            return xmlRequest.responseText === "continue"
+        }
+
+        var config = {
+            connectToDebugger: checkDebuggerOnline(),
+            connecting: function () {
+                document.querySelector('#actionButton').innerHTML = "Connecting..."
+            },
+            connected: function () {
+                document.querySelector('#actionButton').innerHTML = "Connected"
+            },
+        };
+
+        var resetPreviewer = function () {
+            document.querySelector('#actionButton').innerHTML = "Open Editor"
+            document.querySelector('#runner').setAttribute('src', "runner.html?" + new Date().getTime())
+        }
+
+        var openEditor = function() {
+            document.querySelector('#editor').style.display = ''
+            document.querySelector('#previewer').style.display = 'none'
+            document.querySelector('#actionButton').innerHTML = "Run"
+            document.querySelector('#actionButton').onclick = function() {
+                openPreviewer()
+            }
+        }
+
+        var openPreviewer = function() {
+            document.querySelector('#editor').style.display = 'none'
+            document.querySelector('#previewer').style.display = ''
+            document.querySelector('#actionButton').innerHTML = "Open Editor"
+            document.querySelector('#actionButton').onclick = function() {
+                openEditor()
+            }
+            resetPreviewer()
+        }
+
+        setTimeout(function () {
+            if (config.connectToDebugger) {
+                openPreviewer()
+            }
+            else {
+                openEditor()
+            }
+            var menuEl = document.querySelector('#more-menu');
+            var menu = new mdc.menu.MDCMenu(menuEl);
+            var toggle = document.querySelector('.toggle');
+            toggle.addEventListener('click', function () {
+                document.querySelector('#connectToDebuggerToggleButton').innerHTML = config.connectToDebugger === true ? "Disconnect From Debugger" : "Connect To Debugger"
+                menu.open = !menu.open;
+            });
+            document.querySelector('#connectToDebuggerToggleButton').addEventListener('click', function () {
+                config.connectToDebugger = !config.connectToDebugger
+                resetPreviewer()
+            })
+        }, 0)
+    </script>
+
+</body>
+
+</html>
