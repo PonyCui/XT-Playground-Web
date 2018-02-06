@@ -44,9 +44,9 @@
             <iframe style="width: 375px; height: 667px; border: none; background-color: white" class="mdc-elevation--z5" id="runner"
                 name="_runner"></iframe>
         </div>
-        <div id="editor" style="text-align: center; display: none">
-            <iframe style="width: 800px; height: 600px; border: none; background-color: white" class="mdc-elevation--z5"
-                name="_editor" src="editor.html"></iframe>
+        <div id="editor" style="text-align: center;">
+            <iframe style="width: 800px; height: 600px; border: none; background-color: white" class="mdc-elevation--z5" name="_editor"
+                src="editor.html"></iframe>
         </div>
         <p class="mdc-typography--headline" id="greeting"></p>
         <div style="text-align: center">
@@ -64,10 +64,14 @@
     <script>
 
         var checkDebuggerOnline = function () {
-            var xmlRequest = new XMLHttpRequest()
-            xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false)
-            xmlRequest.send()
-            return xmlRequest.responseText === "continue"
+            try {
+                var xmlRequest = new XMLHttpRequest()
+                xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false)
+                xmlRequest.send()
+                return xmlRequest.responseText === "continue"
+            } catch (error) {
+                return false
+            }
         }
 
         var config = {
@@ -84,21 +88,21 @@
             document.querySelector('#actionButton').innerHTML = "Open Editor"
             document.querySelector('#runner').setAttribute('src', "runner.html?" + new Date().getTime())
         }
-
-        var openEditor = function() {
+        
+        var openEditor = function () {
             document.querySelector('#editor').style.display = ''
             document.querySelector('#previewer').style.display = 'none'
             document.querySelector('#actionButton').innerHTML = "Run"
-            document.querySelector('#actionButton').onclick = function() {
+            document.querySelector('#actionButton').onclick = function () {
                 openPreviewer()
             }
         }
 
-        var openPreviewer = function() {
+        var openPreviewer = function () {
             document.querySelector('#editor').style.display = 'none'
             document.querySelector('#previewer').style.display = ''
             document.querySelector('#actionButton').innerHTML = "Open Editor"
-            document.querySelector('#actionButton').onclick = function() {
+            document.querySelector('#actionButton').onclick = function () {
                 openEditor()
             }
             resetPreviewer()
