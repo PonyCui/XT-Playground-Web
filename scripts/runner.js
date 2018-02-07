@@ -27,10 +27,13 @@ var Runner = /** @class */ (function () {
     Runner.prototype.setupNavigationBar = function () {
         var _this = this;
         UI.NavigationBar.onResetNavigationBar(function (navigationBar, viewController) {
-            _this.resetStatusBar(navigationBar);
-            _this.resetBarHeight(navigationBar);
-            _this.addNavigationContents(navigationBar);
-            viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: UI.Screen.mainScreen().width, height: UI.Screen.mainScreen().height - navigationBar.frame.height };
+            clearTimeout(_this.resetTimer);
+            _this.resetTimer = setTimeout(function () {
+                _this.resetStatusBar(navigationBar);
+                _this.resetBarHeight(navigationBar);
+                _this.addNavigationContents(navigationBar);
+                viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: UI.Screen.mainScreen().width, height: UI.Screen.mainScreen().height - navigationBar.frame.height };
+            });
         });
     };
     Runner.prototype.resetStatusBar = function (navigationBar) {

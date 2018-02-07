@@ -60,6 +60,7 @@ class XTPlayground {
 
     openEditor() {
         (document.querySelector('#editor') as HTMLElement).style.display = '';
+        (document.querySelector('#editor') as HTMLElement).style.visibility = '';
         (document.querySelector('#previewer') as HTMLElement).style.display = 'none';
         document.querySelector('#actionButton').innerHTML = "Run";
         (document.querySelector('#actionButton') as HTMLElement).onclick = () => {

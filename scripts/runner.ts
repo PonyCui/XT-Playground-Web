@@ -34,12 +34,17 @@ class Runner {
         this.run()
     }
 
+    resetTimer: any
+
     setupNavigationBar() {
         (UI.NavigationBar as any).onResetNavigationBar((navigationBar, viewController) => {
-            this.resetStatusBar(navigationBar)
-            this.resetBarHeight(navigationBar)
-            this.addNavigationContents(navigationBar)
-            viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: UI.Screen.mainScreen().width, height: UI.Screen.mainScreen().height - navigationBar.frame.height }
+            clearTimeout(this.resetTimer)
+            this.resetTimer = setTimeout(() => {
+                this.resetStatusBar(navigationBar)
+                this.resetBarHeight(navigationBar)
+                this.addNavigationContents(navigationBar)
+                viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: UI.Screen.mainScreen().width, height: UI.Screen.mainScreen().height - navigationBar.frame.height }
+            })
         })
     }
 

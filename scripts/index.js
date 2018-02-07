@@ -54,6 +54,7 @@ var XTPlayground = /** @class */ (function () {
     XTPlayground.prototype.openEditor = function () {
         var _this = this;
         document.querySelector('#editor').style.display = '';
+        document.querySelector('#editor').style.visibility = '';
         document.querySelector('#previewer').style.display = 'none';
         document.querySelector('#actionButton').innerHTML = "Run";
         document.querySelector('#actionButton').onclick = function () {
