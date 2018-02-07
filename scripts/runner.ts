@@ -24,7 +24,7 @@ const xtPlayground: XTPlayground = (parent as any).xtPlayground
 const statusBar = document.querySelector('#status-bar') as HTMLElement
 const naviBar = document.querySelector('#navigation-bar') as HTMLElement;
 const is_iOS = xtPlayground.device.indexOf("iPhone") >= 0 || xtPlayground.device.indexOf("iPad") >= 0
-const iOSBackButtonImage: UI.Image = (UI.Image.fromBase64 as any)('iVBORw0KGgoAAAANSUhEUgAAACcAAAA/CAMAAABU+CHxAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAD2UExURUdwTIyMjI2NjZKSkoyMjJOTk////5CQkJmZmZGRkZ+fn4yMjI2NjYyMjP///42NjYyMjIyMjIyMjIyMjIyMjKqqqoyMjL+/v42NjYyMjIyMjI2NjY2NjYyMjJCQkJCQkIyMjI2NjYyMjIyMjIyMjIyMjI2NjY+Pj4yMjJSUlI+Pj42NjYyMjIyMjIyMjI2NjYyMjIyMjI2NjYyMjKKiooyMjI2NjYyMjIyMjI2NjYyMjIyMjIyMjIyMjI2NjY2NjY2NjYyMjI2NjYyMjIyMjIyMjIyMjI2NjY2NjYyMjIyMjI2NjZCQkI2NjYyMjI+Pj4yMjIyMjJc1wu0AAABRdFJOUwDMpiH7EwEXDxwI8EHsAsX5077o3gb+BJ0z49kJ8yw1rkgmf/aKdTn9DElR2DrSlLZrSrcLiGxQYs7hxlmTgLyvRy0U2s2jJBJ29IklONsn9ywRh4UAAAF4SURBVEjHrdZnTwJBEAbgpd5x9N57kw6CoCJi723//5/RoDhzJjNMIvv5ySZ7t++7o9R+VqF8792trCO31qeHu5i51JvV5Znn9pvpN5YZUb1d1wzz5X+ZfqCZKwHshGbvOWDuMsmu4sAiC5Jlg8AaVZIN/MCKAZIFnoD52yTrfgALZknWiwCLl0h25gaWq5Hs+ABYwkWyeQpY30eyFig9NEhWR8zhIVkTsbBJKe8IsdiMYqEMYmOLYmknYpUkxZIVxJxpMqVTxDIhinViiK3IXJthxJp0TB2I1SUx1bolimlqQgdwjXa742LfR/vNuRoZoh0fuVqSnVf8/ZSa4f8xYnrWGov+r/i+/Ll/F0ka2u7ztEBD7wrno8Mc+xnBpcnAc1l+7X0QNRg4Qf2S9zFQ2Ffi/lNqIetTpaoNUT9/9X0R9f2AgW3Z+yF+j5Qq4fetx8Aafi9f1b/fX3tRmML5wODnjW2wb3bNLz/BvtzTPLSZr14E8xWsT1TC0VxUxJVlAAAAAElFTkSuQmCC', 3.0, 39, 63).retain()
+const iOSBackButtonImage: UI.Image = (UI.Image.fromBase64 as any)('iVBORw0KGgoAAAANSUhEUgAAACcAAAA/CAMAAABU+CHxAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAD2UExURUdwTIyMjI2NjZKSkoyMjJOTk////5CQkJmZmZGRkZ+fn4yMjI2NjYyMjP///42NjYyMjIyMjIyMjIyMjIyMjKqqqoyMjL+/v42NjYyMjIyMjI2NjY2NjYyMjJCQkJCQkIyMjI2NjYyMjIyMjIyMjIyMjI2NjY+Pj4yMjJSUlI+Pj42NjYyMjIyMjIyMjI2NjYyMjIyMjI2NjYyMjKKiooyMjI2NjYyMjIyMjI2NjYyMjIyMjIyMjIyMjI2NjY2NjY2NjYyMjI2NjYyMjIyMjIyMjIyMjI2NjY2NjYyMjIyMjI2NjZCQkI2NjYyMjI+Pj4yMjIyMjJc1wu0AAABRdFJOUwDMpiH7EwEXDxwI8EHsAsX5077o3gb+BJ0z49kJ8yw1rkgmf/aKdTn9DElR2DrSlLZrSrcLiGxQYs7hxlmTgLyvRy0U2s2jJBJ29IklONsn9ywRh4UAAAF4SURBVEjHrdZnTwJBEAbgpd5x9N57kw6CoCJi723//5/RoDhzJjNMIvv5ySZ7t++7o9R+VqF8792trCO31qeHu5i51JvV5Znn9pvpN5YZUb1d1wzz5X+ZfqCZKwHshGbvOWDuMsmu4sAiC5Jlg8AaVZIN/MCKAZIFnoD52yTrfgALZknWiwCLl0h25gaWq5Hs+ABYwkWyeQpY30eyFig9NEhWR8zhIVkTsbBJKe8IsdiMYqEMYmOLYmknYpUkxZIVxJxpMqVTxDIhinViiK3IXJthxJp0TB2I1SUx1bolimlqQgdwjXa742LfR/vNuRoZoh0fuVqSnVf8/ZSa4f8xYnrWGov+r/i+/Ll/F0ka2u7ztEBD7wrno8Mc+xnBpcnAc1l+7X0QNRg4Qf2S9zFQ2Ffi/lNqIetTpaoNUT9/9X0R9f2AgW3Z+yF+j5Qq4fetx8Aafi9f1b/fX3tRmML5wODnjW2wb3bNLz/BvtzTPLSZr14E8xWsT1TC0VxUxJVlAAAAAElFTkSuQmCC', 3.0, 39, 63).imageWithImageRenderingMode(UI.ImageRenderingMode.Template).retain()
 
 
 class Runner {
@@ -87,7 +87,7 @@ class Runner {
             ((navigationBar as any)._viewController.parentViewController as UI.NavigationController).childViewControllers.indexOf((navigationBar as any)._viewController) > 0) {
             const iOSBackButton = new UI.Button()
             iOSBackButton.frame = UI.RectMake(0, 20, 44, 44)
-            iOSBackButton.image = iOSBackButtonImage.imageWithImageRenderingMode(UI.ImageRenderingMode.Template)
+            iOSBackButton.image = iOSBackButtonImage
             iOSBackButton.tintColor = navigationBar.lightContent ? UI.Color.whiteColor : UI.Color.blackColor
             iOSBackButton.onTouchUpInside = () => {
                 ((navigationBar as any)._viewController.parentViewController as UI.NavigationController).popViewController(false)
