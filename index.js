@@ -13,12 +13,10 @@ var XTPlayground = function () {
             return "127.0.0.1:8081"
         }
     }
+    
     var debuggerAddress = findDebuggerAddress()
 
     var checkDebuggerOnline = function () {
-        if (window.location.hostname.indexOf(".com") > 0) {
-            return false
-        }
         try {
             var xmlRequest = new XMLHttpRequest()
             xmlRequest.open("GET", "http://" + debuggerAddress.split(":")[0] + ":8082/status", false)
