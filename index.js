@@ -1,6 +1,9 @@
 var XTPlayground = function () {
 
     var findDebuggerAddress = function () {
+        if (window.location.hostname.indexOf(".com") > 0) {
+            return "127.0.0.1:8081"
+        }
         try {
             var xmlRequest = new XMLHttpRequest()
             xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false)
@@ -10,11 +13,15 @@ var XTPlayground = function () {
             return "127.0.0.1:8081"
         }
     }
+    var debuggerAddress = findDebuggerAddress()
 
     var checkDebuggerOnline = function () {
+        if (window.location.hostname.indexOf(".com") > 0) {
+            return false
+        }
         try {
             var xmlRequest = new XMLHttpRequest()
-            xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false)
+            xmlRequest.open("GET", "http://" + debuggerAddress.split(":")[0] + ":8082/status", false)
             xmlRequest.send()
             return xmlRequest.responseText === "continue"
         } catch (error) {
@@ -24,7 +31,7 @@ var XTPlayground = function () {
 
     var config = {
         repl: "",
-        debuggerAddress: findDebuggerAddress(),
+        debuggerAddress: debuggerAddress,
         connectToDebugger: checkDebuggerOnline(),
         connecting: function () {
             document.querySelector('#actionButton').innerHTML = "Connecting..."
@@ -91,7 +98,7 @@ var XTPlayground = function () {
                 openEditor()
             }
         })
-        document.querySelector("#resetDebugger").addEventListener('click', function() {
+        document.querySelector("#resetDebugger").addEventListener('click', function () {
             resetDebuggerAddress()
         })
     }
