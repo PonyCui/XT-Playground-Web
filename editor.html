@@ -15,25 +15,82 @@
 
     <script src="libs/vs/loader.js"></script>
     <script>
-        var xtTypings = function() {
+        var xtTypings = function () {
             var xmlRequest = new XMLHttpRequest()
             xmlRequest.open("GET", "./libs/xt.d.ts", false)
             xmlRequest.send()
             return xmlRequest.responseText
         }
+        var getValue;
         require.config({ paths: { vs: 'libs/vs' } })
         require(['vs/editor/editor.main'], function () {
             monaco.languages.typescript.typescriptDefaults.addExtraLib(xtTypings())
             var editor = monaco.editor.create(document.getElementById('container'), {
                 value: [
-                    'function x() {',
-                    '\tconsole.log("Hello world!");',
-                    '}'
+                    'class HelloViewController extends UI.ViewController {',
+                    '',
+                    '\tfooLabel = new UI.Label()',
+                    '',
+                    '\tviewDidLoad() {',
+                    '\t\tsuper.viewDidLoad()',
+                    '\t\tthis.fooLabel.text = "Hello, World!"',
+                    '\t\tthis.fooLabel.textAlignment = UI.TextAlignment.Center',
+                    '\t\tthis.view.addSubview(this.fooLabel)',
+                    '\t}',
+                    '',
+                    '\tviewWillLayoutSubviews() {',
+                    '\t\tsuper.viewWillLayoutSubviews()',
+                    '\t\tthis.fooLabel.frame = this.view.bounds',
+                    '\t}',
+                    '',
+                    '}',
+                    '',
+                    'class AppDelegate extends UI.ApplicationDelegate {',
+                    '',
+                    '\tapplicationDidFinishLaunchingWithOptions() {',
+                    '\t\tthis.window = new UI.Window()',
+                    '\t\tthis.window.rootViewController = new UI.NavigationController(new HelloViewController())',
+                    '\t\tthis.window.makeKeyAndVisible()',
+                    '\t}',
+                    '',
+                    '}',
+                    '',
+                    'const application = new UI.Application(undefined, new AppDelegate())',
                 ].join('\n'),
                 language: 'typescript'
             });
+            getValue = function () {
+                var options = {
+                    module: ts.ModuleKind.UMD,
+                    target: ts.ScriptTarget.ES5,
+                    noLib: true,
+                    noResolve: true,
+                    suppressOutputPathCheck: true
+                }
+                var inputFileName = "module.ts";
+                var sourceFile = ts.createSourceFile(inputFileName, editor.getValue(), options.target || ts.ScriptTarget.ES5);
+                var outputText;
+                var program = ts.createProgram([inputFileName], options, {
+                    getSourceFile: function (fileName) { return fileName.indexOf("module") === 0 ? sourceFile : undefined; },
+                    writeFile: function (_name, text) { outputText = text; },
+                    getDefaultLibFileName: function () { return "lib.d.ts"; },
+                    useCaseSensitiveFileNames: function () { return false; },
+                    getCanonicalFileName: function (fileName) { return fileName; },
+                    getCurrentDirectory: function () { return ""; },
+                    getNewLine: function () { return "\r\n"; },
+                    fileExists: function (fileName) { return fileName === inputFileName; },
+                    readFile: function () { return ""; },
+                    directoryExists: function () { return true; },
+                    getDirectories: function () { return []; }
+                });
+                program.emit();
+                if (outputText === undefined) {
+                    throw new Error("Output generation failed");
+                }
+                return outputText;
+            }
         });
-        document.addEventListener("mousewheel", function(e) {
+        document.addEventListener("mousewheel", function (e) {
             e.preventDefault()
         })
     </script>

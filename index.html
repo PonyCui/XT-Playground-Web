@@ -31,6 +31,7 @@
                     <div class="mdc-menu" tabindex="-1" id="more-menu">
                         <ul class="mdc-menu__items mdc-list" role="menu" aria-hidden="true" style="transform: scale(1, 1);">
                             <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;" id="connectToDebuggerToggleButton">Connect To Debugger</li>
+                            <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;" onclick="resetDebuggerAddress()">Reset Debugger IP &amp; Port</li>
                             <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;">Show QR Code</li>
                         </ul>
                     </div>
@@ -61,71 +62,11 @@
 
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <script>window.mdc.autoInit();</script>
+    <script src="index.js"></script>
     <script>
-
-        var checkDebuggerOnline = function () {
-            try {
-                var xmlRequest = new XMLHttpRequest()
-                xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false)
-                xmlRequest.send()
-                return xmlRequest.responseText === "continue"
-            } catch (error) {
-                return false
-            }
-        }
-
-        var config = {
-            connectToDebugger: checkDebuggerOnline(),
-            connecting: function () {
-                document.querySelector('#actionButton').innerHTML = "Connecting..."
-            },
-            connected: function () {
-                document.querySelector('#actionButton').innerHTML = "Connected"
-            },
-        };
-
-        var resetPreviewer = function () {
-            document.querySelector('#actionButton').innerHTML = "Open Editor"
-            document.querySelector('#runner').setAttribute('src', "runner.html?" + new Date().getTime())
-        }
-        
-        var openEditor = function () {
-            document.querySelector('#editor').style.display = ''
-            document.querySelector('#previewer').style.display = 'none'
-            document.querySelector('#actionButton').innerHTML = "Run"
-            document.querySelector('#actionButton').onclick = function () {
-                openPreviewer()
-            }
-        }
-
-        var openPreviewer = function () {
-            document.querySelector('#editor').style.display = 'none'
-            document.querySelector('#previewer').style.display = ''
-            document.querySelector('#actionButton').innerHTML = "Open Editor"
-            document.querySelector('#actionButton').onclick = function () {
-                openEditor()
-            }
-            resetPreviewer()
-        }
-
+        var xtPlayground = new XTPlayground()
         setTimeout(function () {
-            if (config.connectToDebugger) {
-                openPreviewer()
-            }
-            else {
-                openEditor()
-            }
-            var menuEl = document.querySelector('#more-menu');
-            var menu = new mdc.menu.MDCMenu(menuEl);
-            var toggle = document.querySelector('.toggle');
-            toggle.addEventListener('click', function () {
-                document.querySelector('#connectToDebuggerToggleButton').innerHTML = config.connectToDebugger === true ? "Disconnect From Debugger" : "Connect To Debugger"
-                menu.open = !menu.open;
-            });
-            document.querySelector('#connectToDebuggerToggleButton').addEventListener('click', function () {
-                config.connectToDebugger = !config.connectToDebugger
-                resetPreviewer()
-            })
+            xtPlayground.autoInit()
         }, 0)
     </script>
 
