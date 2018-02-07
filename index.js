@@ -91,6 +91,9 @@ var XTPlayground = function () {
                 openEditor()
             }
         })
+        document.querySelector("#resetDebugger").addEventListener('click', function() {
+            resetDebuggerAddress()
+        })
     }
 
     return {
