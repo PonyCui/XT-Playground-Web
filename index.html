@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Greeting App</title>
+    <title>XT Playground</title>
     <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -40,13 +40,48 @@
         </div>
     </header>
     <main>
-        <p class="mdc-typography--headline" id="greeting"></p>
         <div id="previewer" style="text-align: center; display: none">
-            <iframe style="width: 375px; height: 667px; border: none; background-color: white" class="mdc-elevation--z5" id="runner"
-                name="_runner"></iframe>
+            <p class="mdc-typography--headline" id="greeting"></p>
+            <div>
+                <iframe style="width: 375px; height: 667px; border: none; background-color: white" class="mdc-elevation--z5" id="runner"
+                    name="RunnerFrame"></iframe>
+            </div>
+            <div class="mdc-select" id="device-chooser" role="listbox" style="width: 200px">
+                <div class="mdc-select__surface" tabindex="0">
+                    <div class="mdc-select__label">Device</div>
+                    <div class="mdc-select__selected-text"></div>
+                    <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                    <ul class="mdc-list mdc-menu__items">
+                        <li class="mdc-list-item" role="option" tabindex="0">
+                            iPhone 7
+                        </li>
+                        <li class="mdc-list-item" role="option" tabindex="1">
+                            iPhone 7 Plus
+                        </li>
+                        <li class="mdc-list-item" role="option" tabindex="3">
+                            iPhone X
+                        </li>
+                        <li class="mdc-list-item" role="option" tabindex="2">
+                            iPhone 5
+                        </li>
+                        <li class="mdc-list-item" role="option" tabindex="3">
+                            iPhone 4
+                        </li>
+                        <!-- <li class="mdc-list-item" role="option" tabindex="3">
+                            Galaxy S5
+                        </li>
+                        <li class="mdc-list-item" role="option" tabindex="3">
+                            Nexus 5X
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
         </div>
         <div id="editor" style="text-align: center;">
-            <iframe style="width: 800px; height: 600px; border: none; background-color: white" class="mdc-elevation--z5" name="_editor"
+            <p class="mdc-typography--headline" id="greeting"></p>
+            <iframe style="width: 800px; height: 600px; border: none; background-color: white" class="mdc-elevation--z5" name="EditorFrame"
                 src="editor.html"></iframe>
         </div>
         <p class="mdc-typography--headline" id="greeting"></p>
@@ -62,7 +97,7 @@
 
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <script>window.mdc.autoInit();</script>
-    <script src="index.js"></script>
+    <script src="scripts/index.js"></script>
     <script>
         var xtPlayground = new XTPlayground()
         setTimeout(function () {
