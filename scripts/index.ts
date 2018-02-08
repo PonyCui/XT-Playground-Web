@@ -1,6 +1,9 @@
 /// <reference path="../libs/xt.d.ts" />
 declare var mdc: any
 declare var EditorFrame: any
+declare var QRCode: any
+declare var pako: any
+declare var UglifyJS: any
 
 class XTPlayground {
 
@@ -33,7 +36,7 @@ class XTPlayground {
     findDebuggerAddress(callback: (addr: string) => void) {
         if (window.location.hostname.indexOf(".com") > 0) {
             callback("127.0.0.1:8081")
-            return 
+            return
         }
         var xmlRequest = new XMLHttpRequest()
         xmlRequest.timeout = 5000
@@ -105,6 +108,8 @@ class XTPlayground {
         });
     }
 
+    private currentTmpFile: string | undefined = undefined
+
     setupQRCode() {
         const MDCDialog = mdc.dialog.MDCDialog;
         const MDCDialogFoundation = mdc.dialog.MDCDialogFoundation;
@@ -120,21 +125,82 @@ class XTPlayground {
                         const addresses = JSON.parse(xmlRequest.responseText)
                         if (addresses instanceof Array) {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://xt-studio.com/XT-Playground-Web/mobile.html?" + addresses.map(it => "ws://" + it).join("|||"),
-                                width: 144,
-                                height: 144,
-                                colorDark : "#0e4ead",
-                                colorLight : "#ffffff",
-                                correctLevel : QRCode.CorrectLevel.L
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?" + addresses.map(it => "ws://" + it).join("|||"),
+                                width: 320,
+                                height: 320,
+                                colorDark: "#0e4ead",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.L
                             });
                         }
-                    } catch (error) {}
+                    } catch (error) { }
                 }
                 xmlRequest.open("GET", "http://" + this.debuggerAddress.split(":")[0] + ":8082/addr", true)
                 xmlRequest.send()
             }
+            else if ((this.repl = EditorFrame.getValue()) && typeof this.repl === "string") {
+                const repl = UglifyJS.minify(this.repl).code
+                const createQRCode = (deflateString: string, utf8: boolean) => {
+                    if (deflateString.length < 1024) {
+                        new QRCode(document.getElementById("qrcode_area"), {
+                            text: "http://" + window.location.host + window.location.pathname + "/mobile.html?eval=" + deflateString + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                            width: 320,
+                            height: 320,
+                            colorDark: "#0e4ead",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.L
+                        });
+                    }
+                    else {
+                        const uploadRequest = new XMLHttpRequest()
+                        this.currentTmpFile = "tmp_" + performance.now() + "_" + Math.random().toString() + ".min.js"
+                        uploadRequest.onloadend = () => {
+                            new QRCode(document.getElementById("qrcode_area"), {
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest.responseURL + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                                width: 320,
+                                height: 320,
+                                colorDark: "#0e4ead",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.L
+                            });
+                        }
+                        uploadRequest.open("PUT", "http://xt-playground.oss-cn-shenzhen.aliyuncs.com/" + this.currentTmpFile, true)
+                        uploadRequest.setRequestHeader("Content-Type", "text/plain")
+                        uploadRequest.send(deflateString)
+                    }
+                }
+                if (/[^\u0000-\u007f]/.test(repl)) {
+                    const arrayBuffer = new ArrayBuffer(repl.length * 2);
+                    let bufferView = new Uint16Array(arrayBuffer);
+                    for (let i = 0, count = repl.length; i < count; i++) {
+                        bufferView[i] = repl.charCodeAt(i);
+                    }
+                    const deflateString = btoa(pako.deflate(new Uint8Array(bufferView.buffer), { to: 'string' }))
+                    createQRCode(deflateString, true)
+                }
+                else {
+                    const arrayBuffer = new ArrayBuffer(repl.length);
+                    let bufferView = new Uint8Array(arrayBuffer);
+                    for (let i = 0, count = repl.length; i < count; i++) {
+                        bufferView[i] = repl.charCodeAt(i);
+                    }
+                    const deflateString = btoa(pako.deflate(bufferView.buffer, { to: 'string' }))
+                    createQRCode(deflateString, false)
+                }
+            }
             dialog.show()
-        })
+        });
+        dialog.listen('MDCDialog:cancel', () => { this.deleteTmpFile() })
+        document.querySelector('#qrcode-ok-button').addEventListener('click', () => { this.deleteTmpFile() })
+    }
+
+    deleteTmpFile() {
+        if (this.currentTmpFile) {
+            const deleteRequest = new XMLHttpRequest()
+            deleteRequest.open("DELETE", "http://xt-playground.oss-cn-shenzhen.aliyuncs.com/" + this.currentTmpFile, true)
+            deleteRequest.send()
+            this.currentTmpFile = undefined
+        }
     }
 
     setupDeviceChooser() {

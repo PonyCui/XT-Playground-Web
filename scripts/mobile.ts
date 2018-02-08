@@ -1,11 +1,10 @@
-// Mobile Debugger
+/// <reference path="../libs/xt.d.ts" />
+declare var pako: any
 
 class MobileDebugger {
 
-    private connectToDebugger = window.location.search.indexOf('?ws://') === 0
-
     start() {
-        if (this.connectToDebugger) {
+        if (window.location.search.indexOf('?ws://') === 0) {
             const wsServices = decodeURIComponent(window.location.search.substring(1)).split("|||")
             let found = false
             wsServices.filter(it => it.trim().length > 0 && it.indexOf("ws://") >= 0).forEach(wsServer => {
@@ -33,8 +32,33 @@ class MobileDebugger {
                 xmlRequest.send();
             })
         }
-        else {
-
+        else if (window.location.search.indexOf('?eval=') === 0) {
+            if (window.location.search.indexOf('utf8=true') >= 0) {
+                const base64Encoded = window.location.search.substring(6).split("&")[0]
+                const code = String.fromCharCode.apply(null, new Uint16Array(pako.inflate(atob(base64Encoded)).buffer))
+                eval(code)
+            }
+            else {
+                const base64Encoded = window.location.search.substring(6).split("&")[0]
+                const code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))
+                eval(code)
+            }
+        }
+        else if (window.location.search.indexOf('?url=') === 0) {
+            const downloadRequest = new XMLHttpRequest()
+            downloadRequest.onloadend = () => {
+                const base64Encoded = downloadRequest.responseText
+                if (window.location.search.indexOf('utf8=true') >= 0) {
+                    const code = String.fromCharCode.apply(null, new Uint16Array(pako.inflate(atob(base64Encoded)).buffer));
+                    (window as any).eval(code)
+                }
+                else {
+                    const code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
+                    (window as any).eval(code)
+                }
+            }
+            downloadRequest.open("GET", window.location.search.substring(5).split("&")[0], true)
+            downloadRequest.send()
         }
     }
 

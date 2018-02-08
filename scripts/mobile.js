@@ -1,10 +1,9 @@
-// Mobile Debugger
+/// <reference path="../libs/xt.d.ts" />
 var MobileDebugger = /** @class */ (function () {
     function MobileDebugger() {
-        this.connectToDebugger = window.location.search.indexOf('?ws://') === 0;
     }
     MobileDebugger.prototype.start = function () {
-        if (this.connectToDebugger) {
+        if (window.location.search.indexOf('?ws://') === 0) {
             var wsServices = decodeURIComponent(window.location.search.substring(1)).split("|||");
             var found_1 = false;
             wsServices.filter(function (it) { return it.trim().length > 0 && it.indexOf("ws://") >= 0; }).forEach(function (wsServer) {
@@ -34,7 +33,33 @@ var MobileDebugger = /** @class */ (function () {
                 xmlRequest.send();
             });
         }
-        else {
+        else if (window.location.search.indexOf('?eval=') === 0) {
+            if (window.location.search.indexOf('utf8=true') >= 0) {
+                var base64Encoded = window.location.search.substring(6).split("&")[0];
+                var code = String.fromCharCode.apply(null, new Uint16Array(pako.inflate(atob(base64Encoded)).buffer));
+                eval(code);
+            }
+            else {
+                var base64Encoded = window.location.search.substring(6).split("&")[0];
+                var code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
+                eval(code);
+            }
+        }
+        else if (window.location.search.indexOf('?url=') === 0) {
+            var downloadRequest_1 = new XMLHttpRequest();
+            downloadRequest_1.onloadend = function () {
+                var base64Encoded = downloadRequest_1.responseText;
+                if (window.location.search.indexOf('utf8=true') >= 0) {
+                    var code = String.fromCharCode.apply(null, new Uint16Array(pako.inflate(atob(base64Encoded)).buffer));
+                    window.eval(code);
+                }
+                else {
+                    var code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
+                    window.eval(code);
+                }
+            };
+            downloadRequest_1.open("GET", window.location.search.substring(5).split("&")[0], true);
+            downloadRequest_1.send();
         }
     };
     return MobileDebugger;

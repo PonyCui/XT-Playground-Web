@@ -103,21 +103,23 @@
                 </h2>
             </header>
             <section id="my-mdc-dialog-description" class="mdc-dialog__body" style="text-align: center">
-                <div id="qrcode_area" style="width: 144px; height: 144px; background-color: #e0e0e0; margin-left: auto; margin-right: auto">
+                <div id="qrcode_area" style="width: 320px; height: 320px; background-color: #e0e0e0; margin-left: auto; margin-right: auto">
 
                 </div>
                 <p>Use WeChat, iOS Playground, Android Playground, Mobile Browsers, etc.</p>
                 <p>Scan To Preview Application</p>
             </section>
             <footer class="mdc-dialog__footer">
-                <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">OK</button>
+                <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept" id="qrcode-ok-button">OK</button>
             </footer>
         </div>
         <div class="mdc-dialog__backdrop"></div>
     </aside>
 
     <script src="https://cdn.jsdelivr.net/npm/material-components-web@0.30.0/dist/material-components-web.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+    <script async="async" src='https://cdn.jsdelivr.net/npm/pako@1.0.6/dist/pako.min.js'></script>
+    <script async="async" src="libs/uglifyjs.js"></script>
     <script>window.mdc.autoInit();</script>
     <script src="scripts/index.js"></script>
     <script>

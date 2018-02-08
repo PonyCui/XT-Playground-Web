@@ -6,6 +6,7 @@ var XTPlayground = /** @class */ (function () {
         this.repl = "";
         this.device = "iPhone 7";
         this.screen = { width: 375, height: 667 };
+        this.currentTmpFile = undefined;
     }
     XTPlayground.prototype.onConnecting = function () {
         document.querySelector('#actionButton').innerHTML = "Connecting...";
@@ -112,9 +113,9 @@ var XTPlayground = /** @class */ (function () {
                         var addresses = JSON.parse(xmlRequest_1.responseText);
                         if (addresses instanceof Array) {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://xt-studio.com/XT-Playground-Web/mobile.html?" + addresses.map(function (it) { return "ws://" + it; }).join("|||"),
-                                width: 144,
-                                height: 144,
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?" + addresses.map(function (it) { return "ws://" + it; }).join("|||"),
+                                width: 320,
+                                height: 320,
                                 colorDark: "#0e4ead",
                                 colorLight: "#ffffff",
                                 correctLevel: QRCode.CorrectLevel.L
@@ -126,8 +127,68 @@ var XTPlayground = /** @class */ (function () {
                 xmlRequest_1.open("GET", "http://" + _this.debuggerAddress.split(":")[0] + ":8082/addr", true);
                 xmlRequest_1.send();
             }
+            else if ((_this.repl = EditorFrame.getValue()) && typeof _this.repl === "string") {
+                var repl = UglifyJS.minify(_this.repl).code;
+                var createQRCode = function (deflateString, utf8) {
+                    if (deflateString.length < 1024) {
+                        new QRCode(document.getElementById("qrcode_area"), {
+                            text: "http://" + window.location.host + window.location.pathname + "/mobile.html?eval=" + deflateString + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                            width: 320,
+                            height: 320,
+                            colorDark: "#0e4ead",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.L
+                        });
+                    }
+                    else {
+                        var uploadRequest_1 = new XMLHttpRequest();
+                        _this.currentTmpFile = "tmp_" + performance.now() + "_" + Math.random().toString() + ".min.js";
+                        uploadRequest_1.onloadend = function () {
+                            new QRCode(document.getElementById("qrcode_area"), {
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest_1.responseURL + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                                width: 320,
+                                height: 320,
+                                colorDark: "#0e4ead",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.L
+                            });
+                        };
+                        uploadRequest_1.open("PUT", "http://xt-playground.oss-cn-shenzhen.aliyuncs.com/" + _this.currentTmpFile, true);
+                        uploadRequest_1.setRequestHeader("Content-Type", "text/plain");
+                        uploadRequest_1.send(deflateString);
+                    }
+                };
+                if (/[^\u0000-\u007f]/.test(repl)) {
+                    var arrayBuffer = new ArrayBuffer(repl.length * 2);
+                    var bufferView = new Uint16Array(arrayBuffer);
+                    for (var i = 0, count = repl.length; i < count; i++) {
+                        bufferView[i] = repl.charCodeAt(i);
+                    }
+                    var deflateString = btoa(pako.deflate(new Uint8Array(bufferView.buffer), { to: 'string' }));
+                    createQRCode(deflateString, true);
+                }
+                else {
+                    var arrayBuffer = new ArrayBuffer(repl.length);
+                    var bufferView = new Uint8Array(arrayBuffer);
+                    for (var i = 0, count = repl.length; i < count; i++) {
+                        bufferView[i] = repl.charCodeAt(i);
+                    }
+                    var deflateString = btoa(pako.deflate(bufferView.buffer, { to: 'string' }));
+                    createQRCode(deflateString, false);
+                }
+            }
             dialog.show();
         });
+        dialog.listen('MDCDialog:cancel', function () { _this.deleteTmpFile(); });
+        document.querySelector('#qrcode-ok-button').addEventListener('click', function () { _this.deleteTmpFile(); });
+    };
+    XTPlayground.prototype.deleteTmpFile = function () {
+        if (this.currentTmpFile) {
+            var deleteRequest = new XMLHttpRequest();
+            deleteRequest.open("DELETE", "http://xt-playground.oss-cn-shenzhen.aliyuncs.com/" + this.currentTmpFile, true);
+            deleteRequest.send();
+            this.currentTmpFile = undefined;
+        }
     };
     XTPlayground.prototype.setupDeviceChooser = function () {
         var _this = this;
