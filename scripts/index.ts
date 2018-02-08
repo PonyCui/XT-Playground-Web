@@ -4,8 +4,8 @@ declare var EditorFrame: any
 
 class XTPlayground {
 
-    debuggerAddress: string = this.findDebuggerAddress()
-    connectToDebugger: boolean = this.checkDebuggerOnline()
+    debuggerAddress: string = "127.0.0.1:8081"
+    connectToDebugger: boolean = false
     repl = "";
     device = "iPhone 7";
     screen = { width: 375, height: 667 };
@@ -18,29 +18,46 @@ class XTPlayground {
         document.querySelector('#actionButton').innerHTML = "Connected"
     }
 
-    findDebuggerAddress() {
-        if (window.location.hostname.indexOf(".com") > 0) {
-            return "127.0.0.1:8081"
-        }
-        try {
-            var xmlRequest = new XMLHttpRequest()
-            xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false)
-            xmlRequest.send()
-            return xmlRequest.responseText === "continue" ? window.location.hostname + ":8081" : "127.0.0.1:8081"
-        } catch (error) {
-            return "127.0.0.1:8081"
-        }
+    tryToConnectDebugger() {
+        this.findDebuggerAddress((addr) => {
+            this.debuggerAddress = addr
+            this.checkDebuggerOnline((online) => {
+                if (online) {
+                    this.connectToDebugger = true
+                    this.openPreviewer()
+                }
+            })
+        })
     }
 
-    checkDebuggerOnline() {
-        try {
-            var xmlRequest = new XMLHttpRequest()
-            xmlRequest.open("GET", "http://" + this.debuggerAddress.split(":")[0] + ":8082/status", false)
-            xmlRequest.send()
-            return xmlRequest.responseText === "continue"
-        } catch (error) {
-            return false
+    findDebuggerAddress(callback: (addr: string) => void) {
+        if (window.location.hostname.indexOf(".com") > 0) {
+            callback("127.0.0.1:8081")
+            return 
         }
+        var xmlRequest = new XMLHttpRequest()
+        xmlRequest.timeout = 5000
+        xmlRequest.onloadend = () => {
+            callback(xmlRequest.responseText === "continue" ? window.location.hostname + ":8081" : "127.0.0.1:8081")
+        }
+        xmlRequest.onerror = () => {
+            callback("127.0.0.1:8081")
+        }
+        xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", true)
+        xmlRequest.send()
+    }
+
+    checkDebuggerOnline(callback: (online: boolean) => void) {
+        var xmlRequest = new XMLHttpRequest()
+        xmlRequest.timeout = 5000
+        xmlRequest.open("GET", "http://" + this.debuggerAddress.split(":")[0] + ":8082/status", true)
+        xmlRequest.onloadend = () => {
+            callback(xmlRequest.responseText === "continue")
+        }
+        xmlRequest.onerror = () => {
+            callback(false)
+        }
+        xmlRequest.send()
     }
 
     resetDebuggerAddress() {
@@ -82,10 +99,42 @@ class XTPlayground {
     setupMenu() {
         var menu = new mdc.menu.MDCMenu(document.querySelector('#more-menu'));
         var toggle = document.querySelector('.toggle');
-        toggle.addEventListener('click', function () {
+        toggle.addEventListener('click', () => {
             document.querySelector('#connectToDebuggerToggleButton').innerHTML = this.connectToDebugger === true ? "Disconnect From Debugger" : "Connect To Debugger"
             menu.open = !menu.open;
         });
+    }
+
+    setupQRCode() {
+        const MDCDialog = mdc.dialog.MDCDialog;
+        const MDCDialogFoundation = mdc.dialog.MDCDialogFoundation;
+        const util = mdc.dialog.util;
+        const dialog = mdc.dialog.MDCDialog.attachTo(document.querySelector('#qrcode-mdc-dialog'));
+        document.querySelector('#showQRCode').addEventListener('click', () => {
+            document.getElementById("qrcode_area").innerHTML = '';
+            if (this.connectToDebugger === true) {
+                const xmlRequest = new XMLHttpRequest();
+                xmlRequest.timeout = 5000
+                xmlRequest.onloadend = () => {
+                    try {
+                        const addresses = JSON.parse(xmlRequest.responseText)
+                        if (addresses instanceof Array) {
+                            new QRCode(document.getElementById("qrcode_area"), {
+                                text: "http://xt-studio.com/XT-Playground-Web/mobile.html?" + addresses.map(it => "ws://" + it).join("|||"),
+                                width: 144,
+                                height: 144,
+                                colorDark : "#0e4ead",
+                                colorLight : "#ffffff",
+                                correctLevel : QRCode.CorrectLevel.L
+                            });
+                        }
+                    } catch (error) {}
+                }
+                xmlRequest.open("GET", "http://" + this.debuggerAddress.split(":")[0] + ":8082/addr", true)
+                xmlRequest.send()
+            }
+            dialog.show()
+        })
     }
 
     setupDeviceChooser() {
@@ -109,13 +158,10 @@ class XTPlayground {
     }
 
     autoInit() {
-        if (this.connectToDebugger) {
-            this.openPreviewer()
-        }
-        else {
-            this.openEditor()
-        }
+        this.openEditor()
+        this.tryToConnectDebugger()
         this.setupMenu()
+        this.setupQRCode()
         this.setupDeviceChooser()
         document.querySelector('#connectToDebuggerToggleButton').addEventListener('click', () => {
             this.connectToDebugger = !this.connectToDebugger

@@ -1,8 +1,8 @@
 /// <reference path="../libs/xt.d.ts" />
 var XTPlayground = /** @class */ (function () {
     function XTPlayground() {
-        this.debuggerAddress = this.findDebuggerAddress();
-        this.connectToDebugger = this.checkDebuggerOnline();
+        this.debuggerAddress = "127.0.0.1:8081";
+        this.connectToDebugger = false;
         this.repl = "";
         this.device = "iPhone 7";
         this.screen = { width: 375, height: 667 };
@@ -13,30 +13,45 @@ var XTPlayground = /** @class */ (function () {
     XTPlayground.prototype.onConnected = function () {
         document.querySelector('#actionButton').innerHTML = "Connected";
     };
-    XTPlayground.prototype.findDebuggerAddress = function () {
-        if (window.location.hostname.indexOf(".com") > 0) {
-            return "127.0.0.1:8081";
-        }
-        try {
-            var xmlRequest = new XMLHttpRequest();
-            xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", false);
-            xmlRequest.send();
-            return xmlRequest.responseText === "continue" ? window.location.hostname + ":8081" : "127.0.0.1:8081";
-        }
-        catch (error) {
-            return "127.0.0.1:8081";
-        }
+    XTPlayground.prototype.tryToConnectDebugger = function () {
+        var _this = this;
+        this.findDebuggerAddress(function (addr) {
+            _this.debuggerAddress = addr;
+            _this.checkDebuggerOnline(function (online) {
+                if (online) {
+                    _this.connectToDebugger = true;
+                    _this.openPreviewer();
+                }
+            });
+        });
     };
-    XTPlayground.prototype.checkDebuggerOnline = function () {
-        try {
-            var xmlRequest = new XMLHttpRequest();
-            xmlRequest.open("GET", "http://" + this.debuggerAddress.split(":")[0] + ":8082/status", false);
-            xmlRequest.send();
-            return xmlRequest.responseText === "continue";
+    XTPlayground.prototype.findDebuggerAddress = function (callback) {
+        if (window.location.hostname.indexOf(".com") > 0) {
+            callback("127.0.0.1:8081");
+            return;
         }
-        catch (error) {
-            return false;
-        }
+        var xmlRequest = new XMLHttpRequest();
+        xmlRequest.timeout = 5000;
+        xmlRequest.onloadend = function () {
+            callback(xmlRequest.responseText === "continue" ? window.location.hostname + ":8081" : "127.0.0.1:8081");
+        };
+        xmlRequest.onerror = function () {
+            callback("127.0.0.1:8081");
+        };
+        xmlRequest.open("GET", "http://" + window.location.hostname + ":8082/status", true);
+        xmlRequest.send();
+    };
+    XTPlayground.prototype.checkDebuggerOnline = function (callback) {
+        var xmlRequest = new XMLHttpRequest();
+        xmlRequest.timeout = 5000;
+        xmlRequest.open("GET", "http://" + this.debuggerAddress.split(":")[0] + ":8082/status", true);
+        xmlRequest.onloadend = function () {
+            callback(xmlRequest.responseText === "continue");
+        };
+        xmlRequest.onerror = function () {
+            callback(false);
+        };
+        xmlRequest.send();
     };
     XTPlayground.prototype.resetDebuggerAddress = function () {
         var newValue = prompt("Enter Debugger IP & Port", this.debuggerAddress);
@@ -73,11 +88,45 @@ var XTPlayground = /** @class */ (function () {
         this.resetPreviewer();
     };
     XTPlayground.prototype.setupMenu = function () {
+        var _this = this;
         var menu = new mdc.menu.MDCMenu(document.querySelector('#more-menu'));
         var toggle = document.querySelector('.toggle');
         toggle.addEventListener('click', function () {
-            document.querySelector('#connectToDebuggerToggleButton').innerHTML = this.connectToDebugger === true ? "Disconnect From Debugger" : "Connect To Debugger";
+            document.querySelector('#connectToDebuggerToggleButton').innerHTML = _this.connectToDebugger === true ? "Disconnect From Debugger" : "Connect To Debugger";
             menu.open = !menu.open;
+        });
+    };
+    XTPlayground.prototype.setupQRCode = function () {
+        var _this = this;
+        var MDCDialog = mdc.dialog.MDCDialog;
+        var MDCDialogFoundation = mdc.dialog.MDCDialogFoundation;
+        var util = mdc.dialog.util;
+        var dialog = mdc.dialog.MDCDialog.attachTo(document.querySelector('#qrcode-mdc-dialog'));
+        document.querySelector('#showQRCode').addEventListener('click', function () {
+            document.getElementById("qrcode_area").innerHTML = '';
+            if (_this.connectToDebugger === true) {
+                var xmlRequest_1 = new XMLHttpRequest();
+                xmlRequest_1.timeout = 5000;
+                xmlRequest_1.onloadend = function () {
+                    try {
+                        var addresses = JSON.parse(xmlRequest_1.responseText);
+                        if (addresses instanceof Array) {
+                            new QRCode(document.getElementById("qrcode_area"), {
+                                text: "http://xt-studio.com/XT-Playground-Web/mobile.html?" + addresses.map(function (it) { return "ws://" + it; }).join("|||"),
+                                width: 144,
+                                height: 144,
+                                colorDark: "#0e4ead",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.L
+                            });
+                        }
+                    }
+                    catch (error) { }
+                };
+                xmlRequest_1.open("GET", "http://" + _this.debuggerAddress.split(":")[0] + ":8082/addr", true);
+                xmlRequest_1.send();
+            }
+            dialog.show();
         });
     };
     XTPlayground.prototype.setupDeviceChooser = function () {
@@ -102,13 +151,10 @@ var XTPlayground = /** @class */ (function () {
     };
     XTPlayground.prototype.autoInit = function () {
         var _this = this;
-        if (this.connectToDebugger) {
-            this.openPreviewer();
-        }
-        else {
-            this.openEditor();
-        }
+        this.openEditor();
+        this.tryToConnectDebugger();
         this.setupMenu();
+        this.setupQRCode();
         this.setupDeviceChooser();
         document.querySelector('#connectToDebuggerToggleButton').addEventListener('click', function () {
             _this.connectToDebugger = !_this.connectToDebugger;

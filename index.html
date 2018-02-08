@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>XT Playground</title>
-    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-components-web@0.30.0/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="resources/normalize.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
         body {
@@ -32,7 +32,7 @@
                         <ul class="mdc-menu__items mdc-list" role="menu" aria-hidden="true" style="transform: scale(1, 1);">
                             <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;" id="connectToDebuggerToggleButton">Connect To Debugger</li>
                             <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;" id="resetDebugger">Reset Debugger IP &amp; Port</li>
-                            <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;">Show QR Code</li>
+                            <li class="mdc-list-item" role="menuitem" tabindex="0" style="transition-delay: 0.069s;" id="showQRCode">Show QR Code</li>
                         </ul>
                     </div>
                 </div>
@@ -95,7 +95,29 @@
         <p class="mdc-typography--headline" id="greeting"></p>
     </main>
 
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <aside id="qrcode-mdc-dialog" class="mdc-dialog" role="alertdialog" aria-labelledby="my-mdc-dialog-label" aria-describedby="my-mdc-dialog-description">
+        <div class="mdc-dialog__surface">
+            <header class="mdc-dialog__header">
+                <h2 id="my-mdc-dialog-label" class="mdc-dialog__header__title" style="text-align: center">
+                    QR Code
+                </h2>
+            </header>
+            <section id="my-mdc-dialog-description" class="mdc-dialog__body" style="text-align: center">
+                <div id="qrcode_area" style="width: 144px; height: 144px; background-color: #e0e0e0; margin-left: auto; margin-right: auto">
+
+                </div>
+                <p>Use WeChat, iOS Playground, Android Playground, Mobile Browsers, etc.</p>
+                <p>Scan To Preview Application</p>
+            </section>
+            <footer class="mdc-dialog__footer">
+                <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">OK</button>
+            </footer>
+        </div>
+        <div class="mdc-dialog__backdrop"></div>
+    </aside>
+
+    <script src="https://cdn.jsdelivr.net/npm/material-components-web@0.30.0/dist/material-components-web.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
     <script>window.mdc.autoInit();</script>
     <script src="scripts/index.js"></script>
     <script>
