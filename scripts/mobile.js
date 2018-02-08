@@ -34,16 +34,9 @@ var MobileDebugger = /** @class */ (function () {
             });
         }
         else if (window.location.search.indexOf('?eval=') === 0) {
-            if (window.location.search.indexOf('utf8=true') >= 0) {
-                var base64Encoded = window.location.search.substring(6).split("&")[0];
-                var code = String.fromCharCode.apply(null, new Uint16Array(pako.inflate(atob(base64Encoded)).buffer));
-                eval(code);
-            }
-            else {
-                var base64Encoded = window.location.search.substring(6).split("&")[0];
-                var code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
-                eval(code);
-            }
+            var base64Encoded = window.location.search.substring(6).split("&")[0];
+            var code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
+            eval(code);
         }
         else if (window.location.search.indexOf('?url=') === 0) {
             var downloadRequest_1 = new XMLHttpRequest();

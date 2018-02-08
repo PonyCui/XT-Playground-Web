@@ -140,10 +140,10 @@ class XTPlayground {
             }
             else if ((this.repl = EditorFrame.getValue()) && typeof this.repl === "string") {
                 const repl = UglifyJS.minify(this.repl).code
-                const createQRCode = (deflateString: string, utf8: boolean) => {
-                    if (deflateString.length < 1024) {
+                const createQRCode = (repl: string, deflateString: string, utf8: boolean) => {
+                    if (deflateString.length < 1024 && !utf8) {
                         new QRCode(document.getElementById("qrcode_area"), {
-                            text: "http://" + window.location.host + window.location.pathname + "/mobile.html?eval=" + deflateString + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                            text: "http://" + window.location.host + window.location.pathname + "/mobile.html?eval=" + deflateString + "&",
                             width: 320,
                             height: 320,
                             colorDark: "#0e4ead",
@@ -156,7 +156,7 @@ class XTPlayground {
                         this.currentTmpFile = "tmp_" + performance.now() + "_" + Math.random().toString() + ".min.js"
                         uploadRequest.onloadend = () => {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest.responseURL + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest.responseURL + "&",
                                 width: 320,
                                 height: 320,
                                 colorDark: "#0e4ead",
@@ -170,13 +170,7 @@ class XTPlayground {
                     }
                 }
                 if (/[^\u0000-\u007f]/.test(repl)) {
-                    const arrayBuffer = new ArrayBuffer(repl.length * 2);
-                    let bufferView = new Uint16Array(arrayBuffer);
-                    for (let i = 0, count = repl.length; i < count; i++) {
-                        bufferView[i] = repl.charCodeAt(i);
-                    }
-                    const deflateString = btoa(pako.deflate(new Uint8Array(bufferView.buffer), { to: 'string' }))
-                    createQRCode(deflateString, true)
+                    createQRCode(repl, "", true)
                 }
                 else {
                     const arrayBuffer = new ArrayBuffer(repl.length);
@@ -185,7 +179,7 @@ class XTPlayground {
                         bufferView[i] = repl.charCodeAt(i);
                     }
                     const deflateString = btoa(pako.deflate(bufferView.buffer, { to: 'string' }))
-                    createQRCode(deflateString, false)
+                    createQRCode(repl, deflateString, false)
                 }
             }
             dialog.show()

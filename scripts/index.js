@@ -128,11 +128,11 @@ var XTPlayground = /** @class */ (function () {
                 xmlRequest_1.send();
             }
             else if ((_this.repl = EditorFrame.getValue()) && typeof _this.repl === "string") {
-                var repl_1 = UglifyJS.minify(_this.repl).code;
-                var createQRCode = function (deflateString, utf8) {
-                    if (deflateString.length < 1024) {
+                var repl = UglifyJS.minify(_this.repl).code;
+                var createQRCode = function (repl, deflateString, utf8) {
+                    if (deflateString.length < 1024 && !utf8) {
                         new QRCode(document.getElementById("qrcode_area"), {
-                            text: "http://" + window.location.host + window.location.pathname + "/mobile.html?eval=" + deflateString + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                            text: "http://" + window.location.host + window.location.pathname + "/mobile.html?eval=" + deflateString + "&",
                             width: 320,
                             height: 320,
                             colorDark: "#0e4ead",
@@ -145,7 +145,7 @@ var XTPlayground = /** @class */ (function () {
                         _this.currentTmpFile = "tmp_" + performance.now() + "_" + Math.random().toString() + ".min.js";
                         uploadRequest_1.onloadend = function () {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest_1.responseURL + "&utf8=" + (utf8 ? "true" : "false") + "&",
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest_1.responseURL + "&",
                                 width: 320,
                                 height: 320,
                                 colorDark: "#0e4ead",
@@ -155,26 +155,20 @@ var XTPlayground = /** @class */ (function () {
                         };
                         uploadRequest_1.open("PUT", "http://xt-playground.oss-cn-shenzhen.aliyuncs.com/" + _this.currentTmpFile, true);
                         uploadRequest_1.setRequestHeader("Content-Type", "text/plain");
-                        uploadRequest_1.send(repl_1);
+                        uploadRequest_1.send(repl);
                     }
                 };
-                if (/[^\u0000-\u007f]/.test(repl_1)) {
-                    var arrayBuffer = new ArrayBuffer(repl_1.length * 2);
-                    var bufferView = new Uint16Array(arrayBuffer);
-                    for (var i = 0, count = repl_1.length; i < count; i++) {
-                        bufferView[i] = repl_1.charCodeAt(i);
-                    }
-                    var deflateString = btoa(pako.deflate(new Uint8Array(bufferView.buffer), { to: 'string' }));
-                    createQRCode(deflateString, true);
+                if (/[^\u0000-\u007f]/.test(repl)) {
+                    createQRCode(repl, "", true);
                 }
                 else {
-                    var arrayBuffer = new ArrayBuffer(repl_1.length);
+                    var arrayBuffer = new ArrayBuffer(repl.length);
                     var bufferView = new Uint8Array(arrayBuffer);
-                    for (var i = 0, count = repl_1.length; i < count; i++) {
-                        bufferView[i] = repl_1.charCodeAt(i);
+                    for (var i = 0, count = repl.length; i < count; i++) {
+                        bufferView[i] = repl.charCodeAt(i);
                     }
                     var deflateString = btoa(pako.deflate(bufferView.buffer, { to: 'string' }));
-                    createQRCode(deflateString, false);
+                    createQRCode(repl, deflateString, false);
                 }
             }
             dialog.show();
