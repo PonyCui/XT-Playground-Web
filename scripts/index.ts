@@ -125,7 +125,7 @@ class XTPlayground {
                         const addresses = JSON.parse(xmlRequest.responseText)
                         if (addresses instanceof Array) {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?" + addresses.map(it => "ws://" + it).join("|||"),
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?" + addresses.map(it => "ws://" + it).join("%7C%7C%7C"),
                                 width: 320,
                                 height: 320,
                                 colorDark: "#0e4ead",

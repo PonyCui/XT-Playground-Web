@@ -113,7 +113,7 @@ var XTPlayground = /** @class */ (function () {
                         var addresses = JSON.parse(xmlRequest_1.responseText);
                         if (addresses instanceof Array) {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?" + addresses.map(function (it) { return "ws://" + it; }).join("|||"),
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?" + addresses.map(function (it) { return "ws://" + it; }).join("%7C%7C%7C"),
                                 width: 320,
                                 height: 320,
                                 colorDark: "#0e4ead",
