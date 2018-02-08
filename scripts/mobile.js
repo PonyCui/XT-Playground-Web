@@ -48,15 +48,7 @@ var MobileDebugger = /** @class */ (function () {
         else if (window.location.search.indexOf('?url=') === 0) {
             var downloadRequest_1 = new XMLHttpRequest();
             downloadRequest_1.onloadend = function () {
-                var base64Encoded = downloadRequest_1.responseText;
-                if (window.location.search.indexOf('utf8=true') >= 0) {
-                    var code = String.fromCharCode.apply(null, new Uint16Array(pako.inflate(atob(base64Encoded)).buffer));
-                    window.eval(code);
-                }
-                else {
-                    var code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
-                    window.eval(code);
-                }
+                window.eval(downloadRequest_1.responseText);
             };
             downloadRequest_1.open("GET", window.location.search.substring(5).split("&")[0], true);
             downloadRequest_1.send();

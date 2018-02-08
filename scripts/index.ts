@@ -166,7 +166,7 @@ class XTPlayground {
                         }
                         uploadRequest.open("PUT", "http://xt-playground.oss-cn-shenzhen.aliyuncs.com/" + this.currentTmpFile, true)
                         uploadRequest.setRequestHeader("Content-Type", "text/plain")
-                        uploadRequest.send(deflateString)
+                        uploadRequest.send(repl)
                     }
                 }
                 if (/[^\u0000-\u007f]/.test(repl)) {

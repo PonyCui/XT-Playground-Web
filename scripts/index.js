@@ -128,7 +128,7 @@ var XTPlayground = /** @class */ (function () {
                 xmlRequest_1.send();
             }
             else if ((_this.repl = EditorFrame.getValue()) && typeof _this.repl === "string") {
-                var repl = UglifyJS.minify(_this.repl).code;
+                var repl_1 = UglifyJS.minify(_this.repl).code;
                 var createQRCode = function (deflateString, utf8) {
                     if (deflateString.length < 1024) {
                         new QRCode(document.getElementById("qrcode_area"), {
@@ -155,23 +155,23 @@ var XTPlayground = /** @class */ (function () {
                         };
                         uploadRequest_1.open("PUT", "http://xt-playground.oss-cn-shenzhen.aliyuncs.com/" + _this.currentTmpFile, true);
                         uploadRequest_1.setRequestHeader("Content-Type", "text/plain");
-                        uploadRequest_1.send(deflateString);
+                        uploadRequest_1.send(repl_1);
                     }
                 };
-                if (/[^\u0000-\u007f]/.test(repl)) {
-                    var arrayBuffer = new ArrayBuffer(repl.length * 2);
+                if (/[^\u0000-\u007f]/.test(repl_1)) {
+                    var arrayBuffer = new ArrayBuffer(repl_1.length * 2);
                     var bufferView = new Uint16Array(arrayBuffer);
-                    for (var i = 0, count = repl.length; i < count; i++) {
-                        bufferView[i] = repl.charCodeAt(i);
+                    for (var i = 0, count = repl_1.length; i < count; i++) {
+                        bufferView[i] = repl_1.charCodeAt(i);
                     }
                     var deflateString = btoa(pako.deflate(new Uint8Array(bufferView.buffer), { to: 'string' }));
                     createQRCode(deflateString, true);
                 }
                 else {
-                    var arrayBuffer = new ArrayBuffer(repl.length);
+                    var arrayBuffer = new ArrayBuffer(repl_1.length);
                     var bufferView = new Uint8Array(arrayBuffer);
-                    for (var i = 0, count = repl.length; i < count; i++) {
-                        bufferView[i] = repl.charCodeAt(i);
+                    for (var i = 0, count = repl_1.length; i < count; i++) {
+                        bufferView[i] = repl_1.charCodeAt(i);
                     }
                     var deflateString = btoa(pako.deflate(bufferView.buffer, { to: 'string' }));
                     createQRCode(deflateString, false);

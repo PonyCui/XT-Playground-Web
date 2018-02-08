@@ -47,15 +47,7 @@ class MobileDebugger {
         else if (window.location.search.indexOf('?url=') === 0) {
             const downloadRequest = new XMLHttpRequest()
             downloadRequest.onloadend = () => {
-                const base64Encoded = downloadRequest.responseText
-                if (window.location.search.indexOf('utf8=true') >= 0) {
-                    const code = String.fromCharCode.apply(null, new Uint16Array(pako.inflate(atob(base64Encoded)).buffer));
-                    (window as any).eval(code)
-                }
-                else {
-                    const code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
-                    (window as any).eval(code)
-                }
+                (window as any).eval(downloadRequest.responseText)
             }
             downloadRequest.open("GET", window.location.search.substring(5).split("&")[0], true)
             downloadRequest.send()
