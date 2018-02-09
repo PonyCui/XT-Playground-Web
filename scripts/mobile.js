@@ -43,7 +43,7 @@ var MobileDebugger = /** @class */ (function () {
             downloadRequest_1.onloadend = function () {
                 window.eval(downloadRequest_1.responseText);
             };
-            downloadRequest_1.open("GET", window.location.search.substring(5).split("&")[0], true);
+            downloadRequest_1.open("GET", atob(window.location.search.substring(5).split("&")[0]), true);
             downloadRequest_1.send();
         }
     };

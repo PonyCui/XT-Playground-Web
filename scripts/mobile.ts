@@ -42,7 +42,7 @@ class MobileDebugger {
             downloadRequest.onloadend = () => {
                 (window as any).eval(downloadRequest.responseText)
             }
-            downloadRequest.open("GET", window.location.search.substring(5).split("&")[0], true)
+            downloadRequest.open("GET", atob(window.location.search.substring(5).split("&")[0]), true)
             downloadRequest.send()
         }
     }

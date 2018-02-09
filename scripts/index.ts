@@ -158,7 +158,7 @@ class XTPlayground {
                         this.currentTmpFile = "tmp_" + performance.now() + "_" + Math.random().toString() + ".min.js"
                         uploadRequest.onloadend = () => {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest.responseURL + "&",
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + btoa(uploadRequest.responseURL) + "&",
                                 width: 320,
                                 height: 320,
                                 colorDark: "#0e4ead",

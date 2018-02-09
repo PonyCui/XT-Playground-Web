@@ -145,7 +145,7 @@ var XTPlayground = /** @class */ (function () {
                         _this.currentTmpFile = "tmp_" + performance.now() + "_" + Math.random().toString() + ".min.js";
                         uploadRequest_1.onloadend = function () {
                             new QRCode(document.getElementById("qrcode_area"), {
-                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + uploadRequest_1.responseURL + "&",
+                                text: "http://" + window.location.host + window.location.pathname + "/mobile.html?url=" + btoa(uploadRequest_1.responseURL) + "&",
                                 width: 320,
                                 height: 320,
                                 colorDark: "#0e4ead",
