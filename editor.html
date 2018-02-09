@@ -61,6 +61,15 @@
                 ].join('\n'),
                 language: 'typescript'
             });
+            if (parent.location.hash.length > 0) {
+                editor.setValue("")
+                var loadContentRequest = new XMLHttpRequest()
+                loadContentRequest.onloadend = function() {
+                    editor.setValue(loadContentRequest.responseText)
+                }
+                loadContentRequest.open("GET", parent.location.hash.substring(1), true)
+                loadContentRequest.send()
+            }
             getValue = function () {
                 var options = {
                     module: ts.ModuleKind.UMD,
