@@ -34,7 +34,7 @@ class MobileDebugger {
         }
         else if (window.location.search.indexOf('?eval=') === 0) {
             const base64Encoded = window.location.search.substring(6).split("&")[0]
-            const code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))
+            const code = decodeURIComponent(escape(String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))))
             eval(code)
         }
         else if (window.location.search.indexOf('?url=') === 0) {

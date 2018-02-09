@@ -129,8 +129,8 @@ var XTPlayground = /** @class */ (function () {
             }
             else if ((_this.repl = EditorFrame.getValue()) && typeof _this.repl === "string") {
                 var repl = UglifyJS.minify(_this.repl).code;
-                var createQRCode = function (repl, deflateString, utf8) {
-                    if (deflateString.length < 1024 && !utf8) {
+                var createQRCode = function (repl, deflateString) {
+                    if (deflateString.length < 1024) {
                         new QRCode(document.getElementById("qrcode_area"), {
                             text: "http://" + window.location.host + window.location.pathname + "/mobile.html?eval=" + deflateString + "&",
                             width: 320,
@@ -158,18 +158,14 @@ var XTPlayground = /** @class */ (function () {
                         uploadRequest_1.send(repl);
                     }
                 };
-                if (/[^\u0000-\u007f]/.test(repl)) {
-                    createQRCode(repl, "", true);
+                var trimRepl = unescape(encodeURIComponent(repl));
+                var arrayBuffer = new ArrayBuffer(trimRepl.length);
+                var bufferView = new Uint8Array(arrayBuffer);
+                for (var i = 0, count = trimRepl.length; i < count; i++) {
+                    bufferView[i] = trimRepl.charCodeAt(i);
                 }
-                else {
-                    var arrayBuffer = new ArrayBuffer(repl.length);
-                    var bufferView = new Uint8Array(arrayBuffer);
-                    for (var i = 0, count = repl.length; i < count; i++) {
-                        bufferView[i] = repl.charCodeAt(i);
-                    }
-                    var deflateString = btoa(pako.deflate(bufferView.buffer, { to: 'string' }));
-                    createQRCode(repl, deflateString, false);
-                }
+                var deflateString = btoa(pako.deflate(bufferView.buffer, { to: 'string' }));
+                createQRCode(repl, deflateString);
             }
             dialog.show();
         });

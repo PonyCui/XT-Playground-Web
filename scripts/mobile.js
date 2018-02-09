@@ -35,7 +35,7 @@ var MobileDebugger = /** @class */ (function () {
         }
         else if (window.location.search.indexOf('?eval=') === 0) {
             var base64Encoded = window.location.search.substring(6).split("&")[0];
-            var code = String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)));
+            var code = decodeURIComponent(escape(String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))));
             eval(code);
         }
         else if (window.location.search.indexOf('?url=') === 0) {
