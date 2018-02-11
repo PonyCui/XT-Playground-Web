@@ -13,7 +13,7 @@
 
     </div>
 
-    <script src="libs/vs/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.10.1/min/vs/loader.js"></script>
     <script>
         var xtTypings = function () {
             var xmlRequest = new XMLHttpRequest()
@@ -22,7 +22,7 @@
             return xmlRequest.responseText
         }
         var getValue;
-        require.config({ paths: { vs: 'libs/vs' } })
+        require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.10.1/min/vs' } })
         require(['vs/editor/editor.main'], function () {
             monaco.languages.typescript.typescriptDefaults.addExtraLib(xtTypings())
             var editor = monaco.editor.create(document.getElementById('container'), {
