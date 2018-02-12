@@ -84,6 +84,9 @@ var XTPlayground = /** @class */ (function () {
         document.querySelector('#previewer').style.display = '';
         document.querySelector('#actionButton').innerHTML = "Open Editor";
         document.querySelector('#actionButton').onclick = function () {
+            if (_this.connectToDebugger) {
+                return;
+            }
             _this.openEditor();
         };
         this.resetPreviewer();

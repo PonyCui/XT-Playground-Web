@@ -96,6 +96,7 @@ class XTPlayground {
         (document.querySelector('#previewer') as HTMLElement).style.display = '';
         document.querySelector('#actionButton').innerHTML = "Open Editor";
         (document.querySelector('#actionButton') as HTMLElement).onclick = () => {
+            if (this.connectToDebugger) { return }
             this.openEditor()
         }
         this.resetPreviewer()
