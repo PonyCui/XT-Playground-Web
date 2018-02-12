@@ -35,6 +35,7 @@ const iOSBackButtonImage: UI.Image = (UI.Image.fromBase64 as any)('iVBORw0KGgoAA
 class Runner {
 
     constructor() {
+        this.resetStatusBar()
         this.setupNavigationBar()
         this.resetMaskView()
         this.run()
@@ -54,9 +55,9 @@ class Runner {
         })
     }
 
-    resetStatusBar(navigationBar: UI.NavigationBar) {
+    resetStatusBar(navigationBar?: UI.NavigationBar) {
         var basic = kStatuBarBasics[xtPlayground.device];
-        var style = navigationBar.lightContent ? 'light' : 'default';
+        var style = navigationBar && navigationBar.lightContent ? 'light' : 'default';
         statusBar.innerHTML = '<img width="' + UI.Screen.mainScreen().width.toString() + 'px" height="' + (kStatuBarHeight[xtPlayground.device] || 20).toString() + 'px" src="resources/' + basic + style + '.png" />';
     }
 
