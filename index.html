@@ -116,6 +116,12 @@
         <div class="mdc-dialog__backdrop"></div>
     </aside>
 
+    <script>
+        if (navigator.platform === "iPhone" || navigator.platform.indexOf("Linux aarch") === 0 && window.location.hash.length > 0) {
+            window.location.href = "mobile.html?url=" + window.location.hash.substring(1)
+        }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/material-components-web@0.30.0/dist/material-components-web.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
     <script async="async" src='https://cdn.jsdelivr.net/npm/pako@1.0.6/dist/pako.min.js'></script>
