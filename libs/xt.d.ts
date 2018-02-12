@@ -409,7 +409,7 @@ export class Image implements Releasable {
     readonly scale: number;
     readonly renderingMode: ImageRenderingMode;
     static assetsPath: string
-    static fromURL(url: string, success: (image: Image) => void, failure: (error: Error) => void): void
+    static fromURL(url: string, success: (image: Image) => void, failure?: (error: Error) => void): void
     static fromBase64(value: string, scale: number, bitmapWidth?: number, bitmapHeight?: number): Image | undefined
     imageWithImageRenderingMode(renderingMode: ImageRenderingMode): Image
 }
@@ -635,26 +635,6 @@ export class CanvasView extends View {
     restore(): void
     clear(): void
 
-}
-
-export class CustomView extends View {
-
-    onMessage?: (message: string) => any
-    props: any
-    constructor(className: string)
-    emitMessage(message: any): any
-    handleMessage(message: any): any
-
-}
-
-// Web Only
-export class CustomViewFactory {
-    static register(className: string, factory: typeof CustomViewFactory): void
-    requestInnerHTML(): string
-    requestProps(node: Node): any
-    setProps(node: Node, value: any): void
-    emitMessage(message: any): void
-    handleMessage(node: Node, message: any): void
 }
 
 export enum DeviceOrientation {
@@ -1031,8 +1011,6 @@ declare global {
         NavigationBar: typeof NavigationBar,
         NavigationController: typeof NavigationController,
         CanvasView: typeof CanvasView,
-        CustomView: typeof CustomView,
-        CustomViewFactory: typeof CustomViewFactory,
         DeviceOrientation: typeof DeviceOrientation,
         Device: typeof Device,
         TextFieldViewMode: typeof TextFieldViewMode,
