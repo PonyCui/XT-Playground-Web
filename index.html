@@ -118,7 +118,7 @@
 
     <script>
         if (navigator.platform === "iPhone" || navigator.platform.indexOf("Linux aarch") === 0 && window.location.hash.length > 0) {
-            window.location.href = "mobile.html?url=" + window.location.hash.substring(1)
+            window.location.href = "mobile.html?url=" + btoa(window.location.hash.substring(1))
         }
     </script>
 
