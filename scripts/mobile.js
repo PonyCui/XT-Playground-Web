@@ -25,7 +25,10 @@ var MobileDebugger = /** @class */ (function () {
                                 window.location.reload();
                             }
                             else {
-                                window.eval(source);
+                                var url = URL.createObjectURL(new Blob([source], { type: "text/plain" }));
+                                var context_1 = UI.Context.startWithURL(url, {}, function () {
+                                    context_1.attachTo();
+                                }, function (e) { alert(e.message); });
                             }
                         };
                     }
@@ -35,13 +38,20 @@ var MobileDebugger = /** @class */ (function () {
         }
         else if (window.location.search.indexOf('?eval=') === 0) {
             var base64Encoded = window.location.search.substring(6).split("&")[0];
-            var code = decodeURIComponent(escape(String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))));
-            eval(code);
+            var source = decodeURIComponent(escape(String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))));
+            var url = URL.createObjectURL(new Blob([source], { type: "text/plain" }));
+            var context_2 = UI.Context.startWithURL(url, {}, function () {
+                context_2.attachTo();
+            }, function (e) { alert(e.message); });
         }
         else if (window.location.search.indexOf('?url=') === 0) {
             var downloadRequest_1 = new XMLHttpRequest();
             downloadRequest_1.onloadend = function () {
-                window.eval(downloadRequest_1.responseText);
+                var source = downloadRequest_1.responseText;
+                var url = URL.createObjectURL(new Blob([source], { type: "text/plain" }));
+                var context = UI.Context.startWithURL(url, {}, function () {
+                    context.attachTo();
+                }, function (e) { alert(e.message); });
             };
             downloadRequest_1.open("GET", atob(window.location.search.substring(5).split("&")[0]), true);
             downloadRequest_1.send();

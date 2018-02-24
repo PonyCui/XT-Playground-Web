@@ -24,7 +24,10 @@ class MobileDebugger {
                                 window.location.reload()
                             }
                             else {
-                                (window as any).eval(source);
+                                const url = URL.createObjectURL(new Blob([source], { type: "text/plain" }))
+                                const context: any = UI.Context.startWithURL(url, {}, () => {
+                                    context.attachTo()
+                                }, (e) => { alert(e.message) })
                             }
                         }
                     }
@@ -34,13 +37,21 @@ class MobileDebugger {
         }
         else if (window.location.search.indexOf('?eval=') === 0) {
             const base64Encoded = window.location.search.substring(6).split("&")[0]
-            const code = decodeURIComponent(escape(String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))))
-            eval(code)
+            const source = decodeURIComponent(escape(String.fromCharCode.apply(null, pako.inflate(atob(base64Encoded)))))
+            const url = URL.createObjectURL(new Blob([source], { type: "text/plain" }))
+            const context: any = UI.Context.startWithURL(url, {}, () => {
+                context.attachTo()
+            }, (e) => { alert(e.message) })
+
         }
         else if (window.location.search.indexOf('?url=') === 0) {
             const downloadRequest = new XMLHttpRequest()
             downloadRequest.onloadend = () => {
-                (window as any).eval(downloadRequest.responseText)
+                const source = downloadRequest.responseText;
+                const url = URL.createObjectURL(new Blob([source], { type: "text/plain" }))
+                const context: any = UI.Context.startWithURL(url, {}, () => {
+                    context.attachTo()
+                }, (e) => { alert(e.message) })
             }
             downloadRequest.open("GET", atob(window.location.search.substring(5).split("&")[0]), true)
             downloadRequest.send()
