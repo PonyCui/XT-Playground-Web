@@ -121,13 +121,19 @@ class Runner {
                 }
                 else {
                     xtPlayground.onConnected();
-                    (window as any).eval(source);
+                    const url = URL.createObjectURL(new Blob([source], { type: "text/plain" }))
+                    const context: any = UI.Context.startWithURL(url, {}, () => {
+                        context.attachTo()
+                    }, (e) => { alert(e.message) })
                 }
             }
         }
         else {
             try {
-                eval(xtPlayground.repl)
+                const url = URL.createObjectURL(new Blob([xtPlayground.repl], { type: "text/plain" }))
+                const context: any = UI.Context.startWithURL(url, {}, () => {
+                    context.attachTo()
+                }, (e) => { alert(e.message) })
             } catch (error) {
                 console.error(error)
                 alert("Runtime Error: " + error.message)

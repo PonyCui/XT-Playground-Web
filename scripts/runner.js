@@ -103,13 +103,19 @@ var Runner = /** @class */ (function () {
                 }
                 else {
                     xtPlayground.onConnected();
-                    window.eval(source);
+                    var url = URL.createObjectURL(new Blob([source], { type: "text/plain" }));
+                    var context_1 = UI.Context.startWithURL(url, {}, function () {
+                        context_1.attachTo();
+                    }, function (e) { alert(e.message); });
                 }
             };
         }
         else {
             try {
-                eval(xtPlayground.repl);
+                var url = URL.createObjectURL(new Blob([xtPlayground.repl], { type: "text/plain" }));
+                var context_2 = UI.Context.startWithURL(url, {}, function () {
+                    context_2.attachTo();
+                }, function (e) { alert(e.message); });
             }
             catch (error) {
                 console.error(error);

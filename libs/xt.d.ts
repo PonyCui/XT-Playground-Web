@@ -1,5 +1,5 @@
 export interface Releasable {
-    retain(): this;
+    retain(owner?: any): this;
     release(): this;
 }
 
@@ -37,11 +37,20 @@ export enum SwipeDirection {
     ToBottom,
 }
 
+export class Context implements Releasable {
+
+    retain(owner?: any): this
+    release(): this
+
+    static startWithNamed(name: string, options: any, completion: (rootViewController: ViewController) => void): Context
+    static startWithURL(url: string, options: any, completion: (rootViewController: ViewController) => void, failure: (error: Error) => void): Context
+
+}
+
 export class View implements Releasable {
 
-    retain(): this;
+    retain(owner?: any): this;
     release(): this;
-    addOwner(owner: any): this
     constructor()
 
     // Mark: View Geometry
@@ -342,10 +351,8 @@ export enum LayoutRelation {
     Greater = 1,
 }
 
-export class LayoutConstraint implements Releasable {
-    retain(): this;
-    release(): this;
-    addOwner(owner: any): this
+export class LayoutConstraint {
+    
     readonly firstItem?: View;
     readonly firstAttr?: LayoutAttribute;
     readonly relation: LayoutRelation;
@@ -402,9 +409,9 @@ export enum ImageRenderingMode {
 }
 
 export class Image implements Releasable {
-    retain(): this;
+    retain(owner?: any): this;
     release(): this;
-    addOwner(owner: any): this
+    
     readonly size: Size;
     readonly scale: number;
     readonly renderingMode: ImageRenderingMode;
@@ -545,9 +552,9 @@ export enum KeyboardAvoidingMode {
 }
 
 export class ViewController implements Releasable {
-    retain(): this;
+    retain(owner?: any): this;
     release(): this;
-    addOwner(owner: any): this
+    
     title: string
     readonly view: View
     readonly safeAreaInsets: Insets
@@ -565,6 +572,8 @@ export class ViewController implements Releasable {
     removeFromParentViewController(): void
     willMoveToParentViewController(parent?: ViewController): void
     didMoveToParentViewController(parent?: ViewController): void
+    presentViewController(viewController: ViewController, animated?: boolean): void
+    dismissViewController(animated?: boolean): void
     keyboardAvoidingMode(): KeyboardAvoidingMode
     keyboardWillShow(frame: Rect, duration: number): void
     keyboardWillHide(duration: number): void
@@ -965,6 +974,7 @@ declare global {
         Releasable: Releasable,
         InteractionState: typeof InteractionState,
         SwipeDirection: typeof SwipeDirection,
+        Context: typeof Context,
         View: typeof View,
         Color: typeof Color,
         Point: Point,
