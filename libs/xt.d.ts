@@ -387,8 +387,15 @@ export class Button extends View {
     font: Font;
     image?: Image;
     color: Color
+    onTouchDown?: () => void           
+    onTouchDragInside?: () => void     
+    onTouchDragOutside?: () => void    
+    onTouchDragEnter?: () => void      
+    onTouchDragExit?: () => void  
+    onTouchUpInside?: () => void   
+    onTouchUpOutside?: () => void     
+    onTouchCancel?: () => void        
     onHighlighted?: (highligted: boolean) => void
-    onTouchUpInside?: () => void
     onHover?: (hovered: boolean) => void
 }
 
@@ -467,6 +474,12 @@ export interface ListItem {
     rowHeight: (width: number) => number
 }
 
+export class ListEntity implements ListItem {
+    [key: string]: any;
+    reuseIdentifier: string;
+    rowHeight: (width: number) => number;
+}
+
 export enum ListSelectionStyle {
     None,
     Gray,
@@ -478,14 +491,27 @@ export class ListCell extends View {
     readonly contentView: View
     readonly context?: any
     selectionStyle: ListSelectionStyle
+    bottomVisible: boolean
+    isLastCell: boolean
+    bottomLineInsets: Insets
     didHighlighted(highlighted: boolean): void
     didSelected(): void
     didRender(): void
 }
 
+export class ListSection {
+
+    public headerView?: View
+    public footerView?: View
+    public items: ListItem[];
+
+}
+
 export class ListView extends ScrollView {
 
-    items: ListItem[]
+    listHeaderView?: View
+    listFooterView?: View
+    items: (ListItem | ListSection)[]
     renderItem?: (cell: ListCell, item: ListItem) => void
     register(clazz: typeof ListCell, reuseIdentifier: string, context?: any): void
     reloadData(): void
@@ -1008,6 +1034,8 @@ declare global {
         LineBreakMode: typeof LineBreakMode,
         Label: typeof Label,
         ListItem: ListItem,
+        ListSection: typeof ListSection,
+        ListEntity: typeof ListEntity,
         ListSelectionStyle: typeof ListSelectionStyle,
         ListCell: typeof ListCell,
         ListView: typeof ListView,
