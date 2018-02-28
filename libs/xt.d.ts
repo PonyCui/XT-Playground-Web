@@ -5,6 +5,8 @@ export interface Releasable {
 
 export as namespace XT;
 
+export var minSDK: string
+
 export enum ClassType {
     Unknown,
     ObjC,
@@ -532,6 +534,7 @@ export class Screen {
 export class ScrollView extends View {
     contentOffset: Point
     contentSize: Size
+    contentInset: Insets
     isPagingEnabled: boolean
     isDirectionalLockEnabled: boolean
     bounces: boolean
@@ -578,12 +581,19 @@ export enum KeyboardAvoidingMode {
     Pan,
 }
 
+export enum ViewControllerLayoutOptions {
+    None,
+    AndroidLight,
+    AndroidDark,
+}
+
 export class ViewController implements Releasable {
     retain(owner?: any): this;
     release(): this;
 
     title: string
     readonly view: View
+    layoutOptions: ViewControllerLayoutOptions[]
     readonly safeAreaInsets: Insets
     loadView(): void
     viewDidLoad(): void
@@ -989,10 +999,11 @@ export class WebSocket implements Releasable {
     close(): void
 }
 
+declare var require: (path: string) => any;
 
 declare global {
-    var require: (path: string) => any
     const XT: {
+        minSDK: string,
         ClassType: typeof ClassType,
         ClassLoader: typeof ClassLoader,
         Debug: typeof Debug,
@@ -1045,6 +1056,7 @@ declare global {
         TransformMatrix: typeof TransformMatrix,
         Window: typeof Window,
         KeyboardAvoidingMode: typeof KeyboardAvoidingMode,
+        ViewControllerLayoutOptions: typeof ViewControllerLayoutOptions,
         ViewController: typeof ViewController,
         NavigationBarButtonItem: typeof NavigationBarButtonItem,
         NavigationBar: typeof NavigationBar,
