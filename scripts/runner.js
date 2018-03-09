@@ -38,14 +38,14 @@ var Runner = /** @class */ (function () {
                 _this.resetStatusBar(navigationBar);
                 _this.resetBarHeight(navigationBar);
                 _this.addNavigationContents(navigationBar);
-                viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: UI.Screen.mainScreen().width, height: UI.Screen.mainScreen().height - navigationBar.frame.height };
+                viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: UI.Screen.mainScreen.width, height: UI.Screen.mainScreen.height - navigationBar.frame.height };
             });
         });
     };
     Runner.prototype.resetStatusBar = function (navigationBar) {
         var basic = kStatuBarBasics[xtPlayground.device];
         var style = navigationBar && navigationBar.lightContent ? 'light' : 'default';
-        statusBar.innerHTML = '<img width="' + UI.Screen.mainScreen().width.toString() + 'px" height="' + (kStatuBarHeight[xtPlayground.device] || 20).toString() + 'px" src="resources/' + basic + style + '.png" />';
+        statusBar.innerHTML = '<img width="' + UI.Screen.mainScreen.width.toString() + 'px" height="' + (kStatuBarHeight[xtPlayground.device] || 20).toString() + 'px" src="resources/' + basic + style + '.png" />';
     };
     Runner.prototype.resetBarHeight = function (navigationBar) {
         var barHeight = navigationBar.show ? kNavigationBarHeights[xtPlayground.device] : 0;
@@ -55,11 +55,11 @@ var Runner = /** @class */ (function () {
             naviBar.innerHTML = '';
             naviBar.appendChild(navigationBar.nativeObject.nativeObject);
         }
-        navigationBar.frame = { x: 0, y: 0, width: UI.Screen.mainScreen().width, height: barHeight };
+        navigationBar.frame = { x: 0, y: 0, width: UI.Screen.mainScreen.width, height: barHeight };
     };
     Runner.prototype.resetMaskView = function () {
         if (xtPlayground.device === "iPhone X") {
-            maskView.innerHTML = '<img width="' + UI.Screen.mainScreen().width.toString() + 'px" height="' + UI.Screen.mainScreen().height.toString() + 'px" src="resources/mask_ios_x_default.png" />';
+            maskView.innerHTML = '<img width="' + UI.Screen.mainScreen.width.toString() + 'px" height="' + UI.Screen.mainScreen.height.toString() + 'px" src="resources/mask_ios_x_default.png" />';
         }
     };
     Runner.prototype.addNavigationContents = function (navigationBar) {
