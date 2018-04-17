@@ -91,6 +91,14 @@ var Runner = /** @class */ (function () {
             };
             navigationBar.addSubview(iOSBackButton);
         }
+        navigationBar.rightButtonItems && navigationBar.rightButtonItems.forEach(function (item, idx) {
+            var view = new UI.Button();
+            view.frame = UI.RectMake(navigationBar.bounds.width - 44 * (idx + 1), barHeight - 44, 44, 44);
+            view.title = item.title;
+            view.image = item.image;
+            view.onTouchUpInside = item.onTouchUpInside;
+            navigationBar.addSubview(view);
+        });
     };
     Runner.prototype.run = function () {
         if (xtPlayground.connectToDebugger === true) {

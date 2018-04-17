@@ -108,6 +108,14 @@ class Runner {
             }
             navigationBar.addSubview(iOSBackButton)
         }
+        navigationBar.rightButtonItems && navigationBar.rightButtonItems.forEach((item, idx) => {
+            const view = new UI.Button()
+            view.frame = UI.RectMake(navigationBar.bounds.width - 44 * (idx + 1), barHeight - 44, 44, 44)
+            view.title = item.title
+            view.image = item.image
+            view.onTouchUpInside = item.onTouchUpInside
+            navigationBar.addSubview(view)
+        });
     }
 
     run() {
