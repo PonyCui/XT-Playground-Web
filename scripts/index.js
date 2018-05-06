@@ -1,5 +1,5 @@
 /// <reference path="../libs/xt.d.ts" />
-var XTPlayground = /** @class */ (function () {
+var XTPlayground = (function () {
     function XTPlayground() {
         this.debuggerAddress = "127.0.0.1:8081";
         this.connectToDebugger = false;

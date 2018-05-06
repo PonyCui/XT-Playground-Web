@@ -50,7 +50,10 @@ class Runner {
                 this.resetStatusBar(navigationBar)
                 this.resetBarHeight(navigationBar)
                 this.addNavigationContents(navigationBar)
-                viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: UI.Screen.mainScreen.width, height: UI.Screen.mainScreen.height - navigationBar.frame.height }
+                if (!viewController.view.originFrame) {
+                    viewController.view.originFrame = viewController.view.frame
+                }
+                viewController.view.frame = { x: 0, y: navigationBar.frame.height - 1.0, width: viewController.view.originFrame.width, height: viewController.view.originFrame.height - navigationBar.frame.height }
             })
         })
     }
